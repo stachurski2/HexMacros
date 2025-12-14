@@ -65,9 +65,9 @@ public struct Identifiable: ExtensionMacro {
             let extensionDecl = try ExtensionDeclSyntax("extension \(type.trimmed) : Identifiable") {
                 if let idPropertyName = idPropertyName,
                    let idTypeSyntax = idTypeSyntax {
-                    try! VariableDeclSyntax(" % id:\(idTypeSyntax.trimmed)") {
+                    try VariableDeclSyntax("var id:\(idTypeSyntax.trimmed)") {
                         ExprSyntax(stringLiteral: idPropertyName)
-                    }
+                    } 
                 }
             }
             return [extensionDecl]
