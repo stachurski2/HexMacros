@@ -10,6 +10,7 @@ import HexMacrosMacros
 
 let testMacros: [String: Macro.Type] = [
     "stringify": StringifyMacro.self,
+    "Identifiable": Identifiable.self
 ]
 #endif
 
@@ -44,5 +45,55 @@ final class HexMacrosTests: XCTestCase {
         #else
         throw XCTSkip("macros are only supported when running tests for the host platform")
         #endif
+    }
+    
+    func testIdentifiableMacro() throws {
+        #if canImport(HexMacrosMacros)
+    
+        assertMacroExpansion(
+            #"""
+            @Identifiable()
+            struct SomeStruct { }
+            """#,
+            expandedSource: #"""
+
+            struct SomeStruct { }
+
+            extension SomeStruct : Identifiable {
+            }
+            """#,
+            macros: testMacros
+        )
+        #else
+            throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+    
+    func testIdentifiableMacro2() throws {
+    #if canImport(HexMacrosMacros)
+        assertMacroExpansion(
+            #"""
+            @Identifiable("identifier")
+            struct SomeStruct {
+              let identifier:Int
+            }
+            """#,
+            expandedSource: #"""
+            
+            struct SomeStruct {
+              let identifier:Int
+            }
+
+            extension SomeStruct : Identifiable {
+                var id: Int {
+                    identifier
+                }
+            }
+            """#,
+            macros: testMacros
+        )
+    #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+    #endif
     }
 }
